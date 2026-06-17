@@ -5,7 +5,7 @@ A skill for analyzing Windows desktop application projects and generating DESIGN
 ## Features
 
 - **Multi-framework support**: WPF, WinForms, Electron, UWP, WinUI 3, MAUI, Qt, Tauri, Flutter, Flet
-- **Design token extraction**: Colors, typography, spacing, components
+- **Design token extraction**: Colors, typography, spacing, border & corner, shadow & elevation, components
 - **Desktop-specific analysis**: Window frames, menu systems, keyboard shortcuts, system integration
 - **Template-based generation**: Standardized DESIGN.md output
 - **Validation checklist**: Ensure quality and completeness
@@ -68,6 +68,15 @@ windows-desktop-design/
 - Base spacing unit
 - Spacing scale
 - Container widths and gutters
+
+### Border & Corner
+- Corner radius
+- Border width
+- Border style
+
+### Shadow & Elevation
+- Shadow parameters (offset, blur, spread)
+- Elevation level
 
 ### Components
 - Window title bar
@@ -271,7 +280,9 @@ After generating DESIGN.md, verify:
 - All color tokens have hex values
 - Typography tokens include font family, size, weight, line height
 - Spacing tokens follow a consistent scale
-- Component definitions include all states
+- Border/corner tokens have explicit radius and width values
+- Shadow/elevation tokens have complete shadow parameters
+- Component definitions include all states (default, hover, pressed, disabled)
 - Desktop-specific sections are present
 - Markdown formatting is valid
 
