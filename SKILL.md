@@ -7,7 +7,17 @@ description: "Analyzes Windows desktop application projects and generates DESIGN
 
 ## Overview
 
-This skill analyzes Windows desktop application projects to extract design tokens (colors, typography, spacing, components) and generates a comprehensive DESIGN.md file. The generated DESIGN.md enables AI coding agents to produce UI that matches the application's visual style.
+This skill analyzes Windows desktop application projects to extract design tokens (colors, typography, spacing, border, shadow, components) and generates a comprehensive DESIGN.md file. The generated DESIGN.md enables AI coding agents to produce UI that matches the application's visual style.
+
+## Extraction Approach
+
+Design tokens are extracted directly from source code:
+
+- **Token files exist** (e.g., `theme.dart`, `colors.css`): Read and map directly
+- **No token files** (hardcoded in code): Scan source with extraction scripts, collect all values, organize into tokens
+- **Framework default theme**: Supplement with framework default token values
+
+Tokens are organized as **raw values → semantic names → component bindings** when generating DESIGN.md.
 
 ## Supported Frameworks
 
@@ -193,6 +203,64 @@ Flet:
 - Spacing scale (xs, sm, md, lg, xl, etc.)
 - Container widths and gutters
 
+#### Border & Corner
+
+**WPF:**
+- Extract from `BorderBrush`, `BorderThickness`, `CornerRadius` properties
+- Look for border and corner styles defined in Styles
+
+**WinForms:**
+- Extract from control BorderStyle, FlatStyle properties
+- Check `.Designer.cs` for related attributes
+
+**Electron:**
+- Extract from CSS border-radius, border-width, border-style
+- Look for CSS variable definitions
+
+**Flutter:**
+- Extract from `BorderRadius`, container decorations
+- Look for `ShapeDecoration` or `RoundedRectangleBorder` in themes
+- Check `MaterialApp` theme border settings
+
+**Flet:**
+- Extract from `ft.Container` `border_radius` property
+- Look for `ft.Border` configurations
+- Check theme border settings
+
+**Key border/corner tokens:**
+- Corner radius (sm, md, lg, full)
+- Border width (thin, medium, thick)
+- Border style (solid, dashed)
+
+#### Shadow & Elevation
+
+**WPF:**
+- Extract from `DropShadowEffect`, `Effect` properties
+- Look for shadow resources defined in XAML
+
+**WinForms:**
+- Extract from control FlatStyle and related properties
+- Check third-party control library shadow settings
+
+**Electron:**
+- Extract from CSS box-shadow
+- Parse `0px 4px 12px rgba(0,0,0,0.1)` format
+
+**Flutter:**
+- Extract from `BoxShadow`, elevation properties
+- Look for `Material` widget elevation values
+- Check theme shadow configurations
+
+**Flet:**
+- Extract from `ft.Container` shadow properties
+- Look for `ft.BoxShadow` configurations
+- Check theme elevation settings
+
+**Key shadow tokens:**
+- Shadow parameters (X/Y offset, blur, spread, color)
+- Elevation level
+- Inner shadow (if present)
+
 #### Components
 
 **WPF:**
@@ -260,24 +328,25 @@ Generate DESIGN.md following the standard format with desktop-specific extension
 1. Frontmatter (version, name, description)
 2. Colors (YAML token block)
 3. Typography (YAML token block)
-4. Rounded (YAML token block)
-5. Spacing (YAML token block)
-6. Components (YAML token block)
-7. Overview (detailed description)
-8. Colors (detailed breakdown)
-9. Typography (detailed breakdown)
-10. Layout (spacing, grid, container)
-11. Elevation & Depth (shadows)
-12. Shapes (border radius)
-13. Components (detailed component specs)
-14. Do's and Don'ts
-15. Responsive Behavior
+4. Spacing (YAML token block)
+5. Border & Corner (YAML token block)
+6. Shadow & Elevation (YAML token block)
+7. Components (YAML token block)
+8. Overview (detailed description)
+9. Colors (detailed breakdown)
+10. Typography (detailed breakdown)
+11. Spacing (detailed breakdown)
+12. Border & Corner (detailed breakdown)
+13. Shadow & Elevation (detailed breakdown)
+14. Components (detailed component specs)
+15. Do's and Don'ts
+16. Responsive Behavior
 
 **Desktop-Specific Sections:**
-16. Window System
-17. Menu System
-18. Keyboard Shortcuts
-19. System Integration
+17. Window System
+18. Menu System
+19. Keyboard Shortcuts
+20. System Integration
 
 ## Design Token Extraction Scripts
 
@@ -677,6 +746,9 @@ After generating DESIGN.md, verify:
 - [ ] All color tokens have hex values
 - [ ] Typography tokens include font family, size, weight, line height
 - [ ] Spacing tokens follow a consistent scale
+- [ ] Border/corner tokens have explicit radius and width values
+- [ ] Shadow/elevation tokens have complete shadow parameters
+- [ ] Component tokens reference semantic tokens (no hardcoded values)
 - [ ] Component definitions include all states (default, hover, pressed, disabled)
 - [ ] Desktop-specific sections (window, menus, shortcuts) are present
 - [ ] Markdown formatting is valid
